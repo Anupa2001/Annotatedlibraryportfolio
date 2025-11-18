@@ -1,81 +1,211 @@
-import { User, Glasses, Coffee, X } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Button } from './ui/button';
+import { useEffect, useRef } from 'react';
+import { X, ArrowLeft, Mail, Github, Linkedin, Twitter } from 'lucide-react';
 
 interface AboutLibrarianProps {
   onClose: () => void;
 }
 
 export function AboutLibrarian({ onClose }: AboutLibrarianProps) {
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Parallax effect
+    const handleScroll = () => {
+      const scrolled = window.scrollY;
+      if (heroRef.current) {
+        heroRef.current.style.transform = `translateY(${scrolled * 0.4}px)`;
+        heroRef.current.style.opacity = `${1 - scrolled / 600}`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Back button */}
-      <Button
-        variant="ghost"
-        onClick={onClose}
-        className="mb-6 text-[#9a7557] hover:text-[#511626] hover:bg-[#e9ddd1]"
-      >
-        <X className="w-4 h-4 mr-2" />
-        Back to Library
-      </Button>
+    <div className="about-page">
+      {/* Header */}
+      <header className="detail-header">
+        <button onClick={onClose} className="detail-back-btn">
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Library</span>
+        </button>
 
-      <section className="bg-[#e9ddd1] border-2 border-[#b88b7d] rounded-lg shadow-2xl overflow-hidden">
-        <div className="grid md:grid-cols-3 gap-0">
-          {/* Portrait */}
-          <div className="relative h-64 md:h-auto">
-            <ImageWithFallback
-              src="https://images.unsplash.com/photo-1643900173035-e90587358d44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaWJyYXJ5JTIwcG9ydHJhaXQlMjBwZXJzb258ZW58MXx8fHwxNzYzMjQ4NjQ5fDA&ixlib=rb-4.1.0&q=80&w=1080"
-              alt="Librarian portrait"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#e9ddd1] md:block hidden" />
-          </div>
+        <button onClick={onClose} className="detail-close-btn">
+          <X className="w-6 h-6" />
+        </button>
+      </header>
 
-          {/* About Content */}
-          <div className="md:col-span-2 p-8 md:p-12 bg-white">
-            <div className="flex items-center gap-3 mb-6">
-              <User className="w-6 h-6 text-[#6b1d2a]" />
-              <h2 className="text-[#511626]">About the Librarian</h2>
-            </div>
+      {/* Hero */}
+      <section className="about-hero">
+        <div className="about-hero-content" ref={heroRef}>
+          <h1 className="about-title">
+            <span className="about-title-line">About the</span>
+            <span className="about-title-line">Librarian</span>
+          </h1>
+          
+          <p className="about-subtitle">
+            Curator of digital experiences, keeper of creative projects, and
+            documenter of design thinking.
+          </p>
+        </div>
+      </section>
 
-            <div className="prose prose-lg max-w-none">
-              <p className="text-[#511626] leading-relaxed mb-4">
-                Welcome to my portfolio library. I'm <span className="text-[#6b1d2a]">Your Name</span>, a passionate developer and curator of digital experiences. Like a librarian who carefully catalogs and preserves knowledge, I craft each project with attention to detail and purpose.
-              </p>
-              
-              <p className="text-[#511626] leading-relaxed mb-6">
-                With a background spanning web development, design systems, and machine learning, I believe every project tells a story—one that deserves to be documented, annotated, and shared. This library represents not just my work, but my journey through the ever-evolving landscape of technology.
-              </p>
+      {/* Content */}
+      <div className="about-content">
+        <div className="about-content-wrapper">
+          {/* Main Content */}
+          <article className="about-main">
+            <section className="about-section">
+              <h2 className="about-section-title">Background</h2>
+              <div className="about-section-content">
+                <p>
+                  I'm a designer and developer with a passion for creating thoughtful digital
+                  experiences. This library represents my journey through various projects,
+                  each catalogued with the care and attention you'd find in a well-curated
+                  collection.
+                </p>
+                <p>
+                  My approach combines research, design thinking, and technical execution to
+                  create work that's both beautiful and functional. Every project in this
+                  library tells a story—from initial research to final implementation.
+                </p>
+              </div>
+            </section>
 
-              {/* Quick facts */}
-              <div className="grid md:grid-cols-2 gap-4 mt-8">
-                <div className="flex items-start gap-3 p-4 bg-[#e9ddd1] rounded border border-[#b88b7d]">
-                  <Glasses className="w-5 h-5 text-[#6b1d2a] mt-1 shrink-0" />
-                  <div>
-                    <p className="text-[#511626] mb-1">Specialties</p>
-                    <p className="text-[#9a7557] text-sm">Full-Stack Development, UI/UX Design, Machine Learning</p>
+            <section className="about-section">
+              <h2 className="about-section-title">Philosophy</h2>
+              <div className="about-section-content">
+                <div className="about-philosophy-grid">
+                  <div className="about-philosophy-card">
+                    <h3>Research-Driven</h3>
+                    <p>
+                      Every project begins with deep research and understanding. I believe
+                      in knowing the why before tackling the how.
+                    </p>
                   </div>
-                </div>
-                
-                <div className="flex items-start gap-3 p-4 bg-[#e9ddd1] rounded border border-[#b88b7d]">
-                  <Coffee className="w-5 h-5 text-[#6b1d2a] mt-1 shrink-0" />
-                  <div>
-                    <p className="text-[#511626] mb-1">Philosophy</p>
-                    <p className="text-[#9a7557] text-sm italic">"Code is poetry written for both machines and humans"</p>
+
+                  <div className="about-philosophy-card">
+                    <h3>Iterative Process</h3>
+                    <p>
+                      Design is never finished. I embrace iteration and refinement,
+                      learning from each version to create better solutions.
+                    </p>
+                  </div>
+
+                  <div className="about-philosophy-card">
+                    <h3>Thoughtful Documentation</h3>
+                    <p>
+                      Like a librarian, I believe in careful documentation. Each project
+                      includes notes, insights, and lessons learned.
+                    </p>
+                  </div>
+
+                  <div className="about-philosophy-card">
+                    <h3>Human-Centered</h3>
+                    <p>
+                      Technology serves people. My work focuses on creating experiences
+                      that are accessible, intuitive, and meaningful.
+                    </p>
                   </div>
                 </div>
               </div>
+            </section>
+
+            <section className="about-section">
+              <h2 className="about-section-title">Skills & Expertise</h2>
+              <div className="about-section-content">
+                <div className="about-skills-grid">
+                  <div className="about-skill-group">
+                    <h4 className="about-skill-category">Design</h4>
+                    <ul className="about-skill-list">
+                      <li>UI/UX Design</li>
+                      <li>Design Systems</li>
+                      <li>Prototyping</li>
+                      <li>User Research</li>
+                      <li>Accessibility</li>
+                    </ul>
+                  </div>
+
+                  <div className="about-skill-group">
+                    <h4 className="about-skill-category">Development</h4>
+                    <ul className="about-skill-list">
+                      <li>React & TypeScript</li>
+                      <li>Frontend Architecture</li>
+                      <li>Animation & Interaction</li>
+                      <li>Performance Optimization</li>
+                      <li>Responsive Design</li>
+                    </ul>
+                  </div>
+
+                  <div className="about-skill-group">
+                    <h4 className="about-skill-category">Research</h4>
+                    <ul className="about-skill-list">
+                      <li>Trend Analysis</li>
+                      <li>Market Research</li>
+                      <li>Data Visualization</li>
+                      <li>Consumer Insights</li>
+                      <li>Strategic Planning</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </article>
+
+          {/* Sidebar */}
+          <aside className="about-sidebar">
+            <div className="about-sidebar-card">
+              <h3 className="about-sidebar-title">Connect</h3>
+              
+              <div className="about-social-links">
+                <a href="mailto:hello@example.com" className="about-social-link">
+                  <Mail className="w-5 h-5" />
+                  <span>Email</span>
+                </a>
+
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="about-social-link">
+                  <Github className="w-5 h-5" />
+                  <span>GitHub</span>
+                </a>
+
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="about-social-link">
+                  <Linkedin className="w-5 h-5" />
+                  <span>LinkedIn</span>
+                </a>
+
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="about-social-link">
+                  <Twitter className="w-5 h-5" />
+                  <span>Twitter</span>
+                </a>
+              </div>
             </div>
 
-            {/* Decorative divider */}
-            <div className="mt-8 pt-6 border-t border-[#b88b7d]/30">
-              <p className="text-[#6b1d2a] italic text-sm">
-                Currently accepting new commissions and collaborations. Feel free to send me a message via the mail form.
-              </p>
+            <div className="about-sidebar-card">
+              <h3 className="about-sidebar-title">Library Stats</h3>
+              
+              <div className="about-stats">
+                <div className="about-stat">
+                  <span className="about-stat-number">12</span>
+                  <span className="about-stat-label">Projects</span>
+                </div>
+
+                <div className="about-stat">
+                  <span className="about-stat-number">6</span>
+                  <span className="about-stat-label">Categories</span>
+                </div>
+
+                <div className="about-stat">
+                  <span className="about-stat-number">4</span>
+                  <span className="about-stat-label">Years</span>
+                </div>
+              </div>
             </div>
-          </div>
+          </aside>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

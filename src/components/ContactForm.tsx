@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { X, Send, Stamp, Feather } from 'lucide-react';
-import { Button } from './ui/button';
+import { useState, useEffect, useRef } from 'react';
+import { X, ArrowLeft, Send, Mail, User, MessageSquare } from 'lucide-react';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
+import { Button } from './ui/button';
 
 interface ContactFormProps {
   onClose: () => void;
@@ -13,190 +12,190 @@ export function ContactForm({ onClose }: ContactFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
     message: ''
   });
-  const [isSent, setIsSent] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Parallax effect
+    const handleScroll = () => {
+      const scrolled = window.scrollY;
+      if (heroRef.current) {
+        heroRef.current.style.transform = `translateY(${scrolled * 0.4}px)`;
+        heroRef.current.style.opacity = `${1 - scrolled / 600}`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would send this data to a server
+    setIsSubmitted(true);
+    // Here you would typically send the form data to your backend
     console.log('Form submitted:', formData);
-    setIsSent(true);
-    setTimeout(() => {
-      onClose();
-      setIsSent(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 2000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
+    }));
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Back button */}
-      <Button
-        variant="ghost"
-        onClick={onClose}
-        className="mb-6 text-[#9a7557] hover:text-[#511626] hover:bg-[#e9ddd1]"
-      >
-        <X className="w-4 h-4 mr-2" />
-        Back to Library
-      </Button>
+    <div className="contact-page">
+      {/* Header */}
+      <header className="detail-header">
+        <button onClick={onClose} className="detail-back-btn">
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Library</span>
+        </button>
 
-      {/* Letter/Mail Form */}
-      <div className="relative">
-        {/* Envelope-style container */}
-        <div className="bg-[#e9ddd1] border-2 border-[#b88b7d] rounded-lg shadow-2xl overflow-hidden">
-          {/* Top flap decoration */}
-          <div className="h-4 bg-[#511626] relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#6b1d2a] via-[#511626] to-[#6b1d2a]" />
-          </div>
+        <button onClick={onClose} className="detail-close-btn">
+          <X className="w-6 h-6" />
+        </button>
+      </header>
 
-          {/* Letter header */}
-          <div className="bg-white border-b-2 border-[#b88b7d]/50 p-8 relative">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Feather className="w-5 h-5 text-[#6b1d2a]" />
-                  <h1 className="text-[#511626]">Correspondence</h1>
+      {/* Hero */}
+      <section className="contact-hero">
+        <div className="contact-hero-content" ref={heroRef}>
+          <h1 className="contact-title">
+            <span className="contact-title-line">Get in</span>
+            <span className="contact-title-line">Touch</span>
+          </h1>
+          
+          <p className="contact-subtitle">
+            Have a project in mind or want to collaborate? I'd love to hear from you.
+            Drop me a message and let's create something great together.
+          </p>
+        </div>
+      </section>
+
+      {/* Content */}
+      <div className="contact-content">
+        <div className="contact-content-wrapper">
+          {/* Form */}
+          <div className="contact-form-container">
+            {isSubmitted ? (
+              <div className="contact-success">
+                <div className="contact-success-icon">
+                  <Send className="w-12 h-12" />
                 </div>
-                <p className="text-[#9a7557] italic">Send a message to the librarian</p>
-              </div>
-              
-              {/* Decorative stamp */}
-              <div className="hidden md:block">
-                <div className="w-20 h-20 border-4 border-[#6b1d2a] rotate-12 flex items-center justify-center bg-[#e9ddd1]">
-                  <Stamp className="w-10 h-10 text-[#6b1d2a]" />
-                </div>
-              </div>
-            </div>
-
-            {/* Date line */}
-            <div className="mt-6 text-right text-[#9a7557] text-sm italic">
-              {new Date().toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </div>
-          </div>
-
-          {/* Letter content */}
-          <div className="p-8 md:p-12 bg-white">
-            {isSent ? (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-[#6b1d2a] text-[#e9ddd1] rounded-full mb-6">
-                  <Send className="w-10 h-10" />
-                </div>
-                <h2 className="text-[#511626] mb-3">Message Sent!</h2>
-                <p className="text-[#9a7557] italic">
-                  Your correspondence has been delivered. The librarian will respond shortly.
+                <h2 className="contact-success-title">Message Sent!</h2>
+                <p className="contact-success-text">
+                  Thank you for reaching out. I'll get back to you as soon as possible.
                 </p>
+                <button 
+                  onClick={() => setIsSubmitted(false)}
+                  className="btn-secondary"
+                >
+                  Send Another Message
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Salutation */}
-                <div className="text-[#511626] mb-6">
-                  <p className="italic">Dear Librarian,</p>
+              <form onSubmit={handleSubmit} className="contact-form">
+                <div className="form-group">
+                  <label htmlFor="name" className="form-label">
+                    <User className="w-4 h-4" />
+                    Your Name
+                  </label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="John Doe"
+                    className="form-input"
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[#511626]">
-                    Your Email Address
-                  </Label>
+                <div className="form-group">
+                  <label htmlFor="email" className="form-label">
+                    <Mail className="w-4 h-4" />
+                    Email Address
+                  </label>
                   <Input
                     id="email"
                     name="email"
                     type="email"
+                    required
                     value={formData.email}
                     onChange={handleChange}
-                    required
                     placeholder="john@example.com"
-                    className="bg-white border-[#b88b7d] focus:border-[#6b1d2a] font-serif"
+                    className="form-input"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-[#511626]">
-                    Subject
-                  </Label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    placeholder="Regarding..."
-                    className="bg-white border-[#b88b7d] focus:border-[#6b1d2a] font-serif"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-[#511626]">
-                    Your Message
-                  </Label>
+                <div className="form-group">
+                  <label htmlFor="message" className="form-label">
+                    <MessageSquare className="w-4 h-4" />
+                    Message
+                  </label>
                   <Textarea
                     id="message"
                     name="message"
+                    required
                     value={formData.message}
                     onChange={handleChange}
-                    required
-                    placeholder="I am writing to inquire about..."
+                    placeholder="Tell me about your project or inquiry..."
                     rows={8}
-                    className="bg-white border-[#b88b7d] focus:border-[#6b1d2a] font-serif resize-none"
+                    className="form-textarea"
                   />
                 </div>
 
-                {/* Closing */}
-                <div className="text-[#511626] mt-6">
-                  <p className="italic mb-4">Sincerely,</p>
-                  <div className="space-y-2 ml-8">
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      placeholder="Your full name"
-                      className="bg-white border-[#b88b7d] focus:border-[#6b1d2a] font-serif max-w-sm"
-                      style={{ fontFamily: "'Caveat', cursive", fontSize: '1.1rem' }}
-                    />
-                    <div className="h-px bg-[#b88b7d]/50 max-w-sm" />
-                    <p className="text-sm text-[#9a7557] italic">Your signature</p>
-                  </div>
-                </div>
-
-                {/* Submit button */}
-                <div className="flex justify-end pt-6 border-t-2 border-[#b88b7d]/30">
-                  <Button
-                    type="submit"
-                    className="bg-[#6b1d2a] text-[#e9ddd1] hover:bg-[#511626] border-2 border-[#511626]"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Letter
-                  </Button>
-                </div>
+                <Button type="submit" className="btn-primary w-full">
+                  Send Message
+                  <Send className="w-4 h-4" />
+                </Button>
               </form>
             )}
           </div>
 
-          {/* Envelope bottom */}
-          <div className="h-4 bg-[#511626] relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#6b1d2a] via-[#511626] to-[#6b1d2a]" />
-          </div>
-        </div>
+          {/* Sidebar */}
+          <aside className="contact-sidebar">
+            <div className="contact-sidebar-card">
+              <h3 className="contact-sidebar-title">Other Ways to Connect</h3>
+              
+              <div className="contact-methods">
+                <div className="contact-method">
+                  <div className="contact-method-icon">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div className="contact-method-content">
+                    <span className="contact-method-label">Email</span>
+                    <a href="mailto:hello@example.com" className="contact-method-value">
+                      hello@example.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Decorative wax seal */}
-        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#6b1d2a] rounded-full border-4 border-[#d4af37] flex items-center justify-center shadow-xl hidden md:flex">
-          <div className="text-[#d4af37]">
-            <Feather className="w-12 h-12" />
-          </div>
+            <div className="contact-sidebar-card">
+              <h3 className="contact-sidebar-title">Response Time</h3>
+              <p className="contact-response-text">
+                I typically respond within 24-48 hours during business days. For urgent
+                inquiries, please mention "urgent" in your subject line.
+              </p>
+            </div>
+
+            <div className="contact-sidebar-card">
+              <h3 className="contact-sidebar-title">What to Include</h3>
+              <ul className="contact-checklist">
+                <li>Project timeline</li>
+                <li>Budget range (if applicable)</li>
+                <li>Key requirements</li>
+                <li>Any relevant links or examples</li>
+              </ul>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
